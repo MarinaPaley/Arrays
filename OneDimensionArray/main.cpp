@@ -42,12 +42,39 @@ int* CreateArrayRandomly(
 std::string ToString(const size_t size, int* array);
 
 /**
-* \brief Функция нахождения максимального элемента.
+* \brief Функция нахождения максимального элемента, начиная с k-го.
 * \param array Указатель на массив.
 * \param size Размер маасива.
 * \return Максимальный элемент.
 */
 int GetMax(int* array, const size_t size);
+
+/**
+* \brief Функция нахождения максимального элемента, начиная с k-го.
+* \param array Указатель на массив.
+* \param size Размер маасива.
+* \param k Номер элемента, с которого начинаем поис максимума.
+* \return Максимальный элемент.
+*/
+int GetMax(int* array, const size_t size, const size_t k);
+
+/**
+* \brief Находит индекс первого отрицательного элемента.
+* \param array Указатель на массив.
+* \param size Размер маасива.
+* \return Индекс первого отрицательного элемента.
+* \return Если нет отрицательных элементов, возвращаем size.
+*/
+size_t GetNegativeElementIndex(int* array, const size_t size);
+
+/**
+* \brief Найти сумму каждого k-го элемента
+* \param array Указатель на массив.
+* \param size Размер маасива.
+* \k - Условие суммирования.
+* \return Сумма каждого k-го элемента.
+*/
+int GetSum(int* array, const size_t size, const size_t k = 1);
 
 /**
 * \brief Удаление массива.
@@ -86,6 +113,7 @@ int main()
 			static_cast<int>(UserChoice::randomly) <<
 			" - случайно\n";
 		auto userChoice = -1;
+
 		std::cin >> userChoice;
 		auto choice = static_cast<UserChoice>(userChoice);
 		int* array = nullptr;
@@ -110,8 +138,23 @@ int main()
 		
 		std::cout << "Наш массив\n";
 		std::cout << ToString(size, array);
-		std::cout << GetMax(array, size) << std::endl;
+		std::cout << "Максимальный элемент массива: ";
+		std::cout << GetMax(array, size) << "\n";
 
+		std::cout << "Максимальный отрицательный элемент массива: ";
+		size_t index = GetNegativeElementIndex(array, size);
+
+		if (index == size)
+		{
+			std::cout << "В массиве нет отрицательных элементов\n";
+		}
+		else
+		{
+			std::cout << GetMax(array, size, index) << "\n";
+		}
+
+		size_t k = GetSize("Введите условие, сумму каких элементов нужно рассчитать (1 - все элементы, 2 - каждый второй и т.д.) = ");
+		std::cout << "Сумма элементов = " << GetSum(array, size, k);
 		DeleteArray(array);
 		return 0;
 	}
@@ -178,6 +221,19 @@ std::string ToString(const size_t size, int* array)
 	return buffer.str();
 }
 
+int GetMax(int* array, const size_t size, const size_t k)
+{
+	int max = array[k];
+	for (size_t index = k + 1; index < size; index++)
+	{
+		if (max < array[index] && array[index] < 0)
+		{
+			max = array[index];
+		}
+	}
+	return max;
+}
+
 int GetMax(int* array, const size_t size)
 {
 	int max = array[0];
@@ -189,6 +245,28 @@ int GetMax(int* array, const size_t size)
 		}
 	}
 	return max;
+}
+
+size_t GetNegativeElementIndex(int* array, const size_t size)
+{
+	size_t index = 0;
+	while (index < size && array[index] > 0)
+	{
+		index++;
+	}
+
+	return index;
+}
+
+int GetSum(int* array, const size_t size, const size_t k)
+{
+	int sum = 0;
+	for (size_t index = 0; index < size; index += k)
+	{
+		sum += array[index];
+	}
+
+	return sum;
 }
 
 void DeleteArray(int*& array)
